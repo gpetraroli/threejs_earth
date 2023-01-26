@@ -6,8 +6,9 @@ import ISS from "./objs/iss";
 import Moon from "./objs/moon";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 
+const clock = new THREE.Clock();
 const earthDiameter = 10;
-const earthSideralDay = 0.0001;
+const earthSideralDay = 0.01;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -41,20 +42,20 @@ scene.add(earth);
 scene.add(Sun(20, {x: 1000, y: 0, z: 0}));
 
 const iss = ISS();
-scene.add(iss);
+// scene.add(iss);
 
 const moon = Moon(earthDiameter / 4);
-scene.add(moon);
+// scene.add(moon);
 
 renderer.setAnimationLoop(() => {
     stats.begin();
-    setTimeout(() => {
+    const delta = clock.getDelta();
+    console.log(earthSideralDay * delta);
         renderer.render(scene, camera);
 
-        earth.rotation.y += earthSideralDay;
-        iss.rotation.x += earthSideralDay * 15.5;
-        moon.rotation.y += earthSideralDay / 14;
-    }, 1000 / 60);
+        earth.rotation.y += earthSideralDay * delta;
+        iss.rotation.x += earthSideralDay * 15.5 * delta;
+        moon.rotation.y += earthSideralDay / 29.5 * delta;
     stats.end();
 });
 
@@ -63,6 +64,8 @@ document.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+
 
 const stats = new Stats()
 stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
