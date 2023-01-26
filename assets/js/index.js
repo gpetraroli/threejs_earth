@@ -4,6 +4,7 @@ import Earth from "./objs/earth";
 import Sun from "./objs/sun";
 import ISS from "./objs/iss";
 import Moon from "./objs/moon";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 
 const earthDiameter = 10;
 const earthSideralDay = 0.0001;
@@ -18,7 +19,6 @@ camera.position.z = 20;
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
-controls.enableZoom = false;
 
 const scene = new THREE.Scene();
 
@@ -47,14 +47,15 @@ const moon = Moon(earthDiameter / 4);
 scene.add(moon);
 
 renderer.setAnimationLoop(() => {
+    stats.begin();
     setTimeout(() => {
         renderer.render(scene, camera);
 
         earth.rotation.y += earthSideralDay;
         iss.rotation.x += earthSideralDay * 15.5;
         moon.rotation.y += earthSideralDay / 14;
-
     }, 1000 / 60);
+    stats.end();
 });
 
 document.addEventListener('resize', () => {
@@ -62,3 +63,7 @@ document.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+const stats = new Stats()
+stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom)
